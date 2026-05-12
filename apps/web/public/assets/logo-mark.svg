@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Mandaí mark">
+  
+  <rect x="0" y="0" width="80" height="80" rx="20" fill="#F23A0A"></rect>
+
+  
+  <path d="M 14 64 L 14 24 L 24 24 L 40 48 L 56 24 L 66 24 L 66 64 L 57 64 L 57 40 L 43 60 L 37 60 L 23 40 L 23 64 Z" fill="#FBF7F2"></path>
+
+  
+  <circle cx="64" cy="22" r="5" fill="#F59E10"></circle>
+
+  
+  <g transform="translate(40,62)">
+    
+    <line x1="-12" y1="3" x2="-6" y2="3" stroke="#FBF7F2" stroke-width="1.4" stroke-linecap="round" opacity="0.8"></line>
+    
+    <path d="M -3 6 L 9 6 L 12 3 L 15 3" fill="none" stroke="#1C1812" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path>
+    
+    <rect x="0" y="-3" width="6" height="6" rx="1" fill="#2E8A3B" stroke="#1C1812" stroke-width="1.4"></rect>
+    
+    <circle cx="6" cy="-3" r="2" fill="#1C1812"></circle>
+    
+    <circle cx="-3" cy="7" r="3" fill="#FBF7F2" stroke="#1C1812" stroke-width="1.6"></circle>
+    <circle cx="14" cy="7" r="3" fill="#FBF7F2" stroke="#1C1812" stroke-width="1.6"></circle>
+  </g>
+</svg>

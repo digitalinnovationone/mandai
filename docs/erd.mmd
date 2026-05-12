@@ -1,0 +1,63 @@
+erDiagram
+  Restaurant  ||--o{ MenuSection : "1 restaurante tem N seções de menu"
+  MenuSection ||--o{ MenuItem    : "1 seção contém N pratos"
+  Restaurant  ||--o{ Order       : "1 restaurante recebe N pedidos"
+  Order       ||--o{ OrderItem   : "1 pedido tem N linhas de item"
+  MenuItem    ||--o{ OrderItem   : "1 prato é snapshot em N linhas (histórico sobrevive a mudanças no cardápio)"
+
+  Restaurant {
+    string   id              PK
+    string   name
+    string   slug            UK "usado em /restaurante/[slug]"
+    string   category           "ex: padaria, pizza, japonesa — filtrado em ?category="
+    float    rating
+    int      distanceMeters
+    string   coverUrl
+    bool     isOpen             "controla CTA / tela 07 Restaurante fechado"
+    string   address            "ex: R. Wisard, 348 — visível na confirmação"
+    string   neighborhood       "ex: Vila Madalena — pickup pill no header"
+    string   phone              "ex: (11) 2389-0042 — visível na confirmação"
+  }
+
+  MenuSection {
+    string   id              PK
+    string   restaurantId    FK
+    string   name               "ex: Salgados, Bebidas"
+    int      order              "ordem de exibição na sticky nav do cardápio"
+  }
+
+  MenuItem {
+    string   id              PK
+    string   sectionId       FK
+    string   name
+    string   description
+    int      priceCents
+    string   imageUrl
+    bool     available          "false → badge 'esgotado' (tela 08)"
+  }
+
+  Order {
+    string   id              PK "interno, ex: A8B2C9F1"
+    string   code            UK "MA-XXXX, alfanumérico maiúsculo sem 0/O/1/I; mostrado no balcão"
+    string   restaurantId    FK
+    string   customerName       "nome digitado no form da finalização — 'Pode vir buscar, Marina!'"
+    string   status             "pending | confirmed | ready | picked_up | cancelled"
+    int      subtotalCents
+    int      discountCents      "0 quando sem cupom"
+    string   couponCode         "snapshot do código aplicado, nullable"
+    int      totalCents
+    string   qrPayload          "URL assinada lida no balcão (ex: mandai.app/r/MA-7K2D?sig=…)"
+    datetime estimatedReadyAt   "renderizado como 'Pronto em ~18 min' na confirmação"
+    datetime createdAt
+  }
+
+  OrderItem {
+    string   id                 PK
+    string   orderId            FK
+    string   menuItemId         FK
+    string   nameSnapshot          "congelado no momento do pedido"
+    int      priceCentsSnapshot    "preço base congelado"
+    int      qty
+    string   note                  "obs do cliente, max 140 char — 'Bem tostado, por favor.'"
+    json     modifiers             "[{ group, option, priceDelta }] — evita 3 tabelas extras"
+  }

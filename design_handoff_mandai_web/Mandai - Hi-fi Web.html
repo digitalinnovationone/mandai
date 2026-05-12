@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mandaí — Hi-fi web (6 telas)</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/app.css">
+<link rel="icon" href="assets/logo-mark.svg">
+<style>
+  html, body { background: #f0eee9; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="src/shared.jsx"></script>
+<script type="text/babel" src="src/screen-home.jsx"></script>
+<script type="text/babel" src="src/screen-category.jsx"></script>
+<script type="text/babel" src="src/screen-restaurant.jsx"></script>
+<script type="text/babel" src="src/screen-modal.jsx"></script>
+<script type="text/babel" src="src/screen-cart.jsx"></script>
+<script type="text/babel" src="src/screen-empty-cart.jsx"></script>
+<script type="text/babel" src="src/screen-confirm.jsx"></script>
+<script type="text/babel" src="src/screen-search.jsx"></script>
+<script type="text/babel" src="src/screen-states.jsx"></script>
+
+<script type="text/babel">
+function App() {
+  // Each artboard sized desktop-first at 1440px wide.
+  // Heights tuned to each screen's content so the canvas isn't full of empty space.
+  const W = 1440;
+  return (
+    <DesignCanvas>
+      <DCSection id="fluxo" title="Mandaí — fluxo de pedido (desktop, 1440)" subtitle="6 telas em ordem: descoberta → cardápio → adição → sacola → confirmação. Retirada no balcão, sem login, sem entrega.">
+        <DCArtboard id="01-home" label="01 · Home" width={W} height={2200}>
+          <ScreenHome/>
+        </DCArtboard>
+        <DCArtboard id="02-categoria" label="02 · Categoria" width={W} height={1500}>
+          <ScreenCategory/>
+        </DCArtboard>
+        <DCArtboard id="03-restaurante" label="03 · Cardápio do restaurante" width={W} height={2200}>
+          <ScreenRestaurant/>
+        </DCArtboard>
+        <DCArtboard id="04-modal" label="04 · Adicionar item (modal)" width={W} height={1450}>
+          <ScreenAddItem/>
+        </DCArtboard>
+        <DCArtboard id="05-sacola" label="05 · Sacola" width={W} height={1500}>
+          <ScreenCart/>
+        </DCArtboard>
+        <DCArtboard id="05b-sacola-vazia" label="05b · Sacola vazia" width={W} height={1500}>
+          <ScreenEmptyCart/>
+        </DCArtboard>
+        <DCArtboard id="06-confirmacao" label="06 · Pedido confirmado" width={W} height={1500}>
+          <ScreenConfirm/>
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="busca" title="Busca por texto" subtitle="Header com busca acionada. Resultados mistos (restaurantes + pratos), refino lateral e estado vazio com sugestões.">
+        <DCArtboard id="11-busca" label="11 · Busca — resultados" width={W} height={1700}>
+          <ScreenSearch/>
+        </DCArtboard>
+        <DCArtboard id="11b-busca-vazia" label="11b · Busca — sem resultados" width={W} height={1500}>
+          <ScreenSearchEmpty/>
+        </DCArtboard>
+      </DCSection>
+      <DCSection id="estados" title="Estados auxiliares e fluxos de exceção" subtitle="Restaurante fechado, item esgotado, login (preparação v2) e erro genérico.">
+        <DCArtboard id="07-fechado" label="07 · Restaurante fechado" width={W} height={1700}>
+          <ScreenClosedRestaurant/>
+        </DCArtboard>
+        <DCArtboard id="08-esgotado" label="08 · Item esgotado + modal" width={W} height={1100}>
+          <ScreenOutOfStock/>
+        </DCArtboard>
+        <DCArtboard id="09-login" label="09 · Login (v2)" width={W} height={900}>
+          <ScreenLogin/>
+        </DCArtboard>
+        <DCArtboard id="10-erro" label="10 · Erro" width={W} height={900}>
+          <ScreenError/>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App/>);
+</script>
+</body>
+</html>

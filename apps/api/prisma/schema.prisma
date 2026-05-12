@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id             String        @id @default(cuid())
+  name           String
+  slug           String        @unique
+  category       String
+  rating         Float         @default(0)
+  distanceMeters Int           @default(0)
+  coverUrl       String
+  isOpen         Boolean       @default(true)
+  address        String
+  neighborhood   String
+  phone          String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  sections       MenuSection[]
+  orders         Order[]
+}
+
+model MenuSection {
+  id           String     @id @default(cuid())
+  restaurantId String
+  name         String
+  order        Int        @default(0)
+  items        MenuItem[]
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  sectionId   String
+  name        String
+  description String
+  priceCents  Int
+  imageUrl    String
+  available   Boolean     @default(true)
+  section     MenuSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  code             String      @unique
+  restaurantId     String
+  customerName     String
+  status           String      @default("pending")
+  subtotalCents    Int
+  discountCents    Int         @default(0)
+  couponCode       String?
+  totalCents       Int
+  qrPayload        String
+  estimatedReadyAt DateTime
+  createdAt        DateTime    @default(now())
+  restaurant       Restaurant  @relation(fields: [restaurantId], references: [id])
+  items            OrderItem[]
+}
+
+model OrderItem {
+  id                 String   @id @default(cuid())
+  orderId            String
+  menuItemId         String
+  nameSnapshot       String
+  priceCentsSnapshot Int
+  qty                Int
+  note               String?
+  modifiers          Json     @default("[]")
+  menuItem           MenuItem @relation(fields: [menuItemId], references: [id])
+  order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}

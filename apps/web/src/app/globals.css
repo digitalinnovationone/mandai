@@ -1,0 +1,20 @@
+/* Mandaí Global Styles */
+/* Import design tokens first (colors, type, spacing, radii, shadows, motion) */
+@import "../styles/tokens.css";
+/* Import shared app styles (header, footer, buttons, cards, layout) */
+@import "../styles/app.css";
+
+/* ============================================================
+   App-specific overrides / extensions
+   ============================================================ */
+
+/* Ensure full height layout for Next.js App Router */
+html,
+body {
+  height: 100%;
+}
+
+#__next,
+main {
+  flex: 1;
+}
