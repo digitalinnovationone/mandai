@@ -28,3 +28,4 @@ out/
 
 # Claude Code local settings and agent memory
 .claude/
+.env*.local
