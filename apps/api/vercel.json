@@ -1,6 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/api" }],
+  "buildCommand": "npx prisma generate",
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
   "functions": {
-    "src/api/index.ts": { "maxDuration": 10 }
+    "api/index.ts": { "maxDuration": 10 }
   }
 }
+
+
