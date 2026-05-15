@@ -224,6 +224,43 @@ export default function ConfirmationClient({
           </div>
         )}
 
+        {/* Subtotal + discount (only when coupon was applied) */}
+        {order.discountCents > 0 && (
+          <div
+            style={{
+              borderTop: "1px solid var(--border-1)",
+              paddingTop: 12,
+              marginBottom: 4,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: 13,
+                color: "var(--fg-2)",
+                marginBottom: 6,
+              }}
+            >
+              <span>Subtotal</span>
+              <span className="price">{formatPrice(order.subtotalCents)}</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: 13,
+                color: "var(--folha-700)",
+                fontWeight: 600,
+                marginBottom: 4,
+              }}
+            >
+              <span>Desconto cupom de boas-vindas</span>
+              <span className="price">−{formatPrice(order.discountCents)}</span>
+            </div>
+          </div>
+        )}
+
         {/* Total */}
         <div
           style={{

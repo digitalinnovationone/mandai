@@ -1,4 +1,4 @@
-// Cart types — v0.1.0 (coupons intentionally out of scope per ADR)
+// Cart types — v0.2.0 (US-01: coupon welcome, ADR-0009)
 
 export interface CartItemModifier {
   group: string;
@@ -24,6 +24,12 @@ export interface CartState {
   restaurantId: string | null;
   restaurantName: string;
   items: CartItem[];
+  /**
+   * True when the user redeemed the R$10 welcome coupon.
+   * Survives restaurant switches and page refreshes (persisted in localStorage).
+   * Intentionally NOT reset on CLEAR_CART — coupon is per-session, not per-order.
+   */
+  couponRedeemed: boolean;
 }
 
 // ─── Actions ─────────────────────────────────────────────────────
@@ -42,4 +48,5 @@ export type CartAction =
   | { type: "REMOVE_ITEM"; payload: { id: string } }
   | { type: "UPDATE_QTY"; payload: { id: string; qty: number } }
   | { type: "CLEAR_CART" }
-  | { type: "HYDRATE"; payload: CartState };
+  | { type: "HYDRATE"; payload: CartState }
+  | { type: "REDEEM_COUPON" };

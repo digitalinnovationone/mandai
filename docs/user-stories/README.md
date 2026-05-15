@@ -18,6 +18,7 @@ Mapa de escopo do MVP derivado das 13 telas do handoff e das regras do `ARQUITET
 | [US-08](./US-08-finalizar-e-receber-codigo.md) | Finalizar e receber código | Obrigatório |
 | [US-09](./US-09-lidar-com-estados-de-erro.md) | Lidar com estados de erro | Obrigatório |
 | [US-10](./US-10-trocar-restaurante-com-sacola.md) | Trocar de restaurante com sacola | **Opcional MVP** |
+| [US-11](./US-11-cupom-boas-vindas.md) | Resgatar cupom de boas-vindas | **v0.2 — Fase A frontend / Fase B requer Architect** |
 
 ---
 
