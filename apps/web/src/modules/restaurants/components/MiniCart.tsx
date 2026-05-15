@@ -12,7 +12,7 @@ function formatPrice(cents: number): string {
 }
 
 export default function MiniCart() {
-  const { state, totalCents } = useCart();
+  const { state, subtotalCents } = useCart();
 
   return (
     <div
@@ -138,7 +138,7 @@ export default function MiniCart() {
           >
             <span style={{ fontSize: 13, color: "var(--fg-2)" }}>Subtotal</span>
             <span className="price" style={{ fontSize: 18, color: "var(--ink-800)" }}>
-              {formatPrice(totalCents)}
+              {formatPrice(subtotalCents)}
             </span>
           </div>
         </>

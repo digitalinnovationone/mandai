@@ -10,12 +10,18 @@ import {
 } from "react";
 import type { CartState, CartAction, CartItem } from "./types";
 
+// ─── Constants ───────────────────────────────────────────────────
+
+/** Welcome coupon value in cents (R$10,00). Mirrored in backend CreateOrderUseCase. */
+const WELCOME_COUPON_VALUE_CENTS = 1000;
+
 // ─── Initial state ────────────────────────────────────────────────
 
 const INITIAL_STATE: CartState = {
   restaurantId: null,
   restaurantName: "",
   items: [],
+  couponRedeemed: false,
 };
 
 const STORAGE_KEY = "mandai:cart";
@@ -24,8 +30,9 @@ const STORAGE_KEY = "mandai:cart";
 
 function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
+    // Defensive spread: old localStorage values without couponRedeemed default to false
     case "HYDRATE":
-      return action.payload;
+      return { ...INITIAL_STATE, ...action.payload };
 
     case "ADD_ITEM": {
       const { restaurantId, restaurantName, item, force } = action.payload;
@@ -35,9 +42,14 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         id: `${item.menuItemId}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       };
 
-      // force = user already confirmed switch → clear and start over
+      // force = user already confirmed switch → clear items but KEEP coupon state (ADR-0009)
       if (force) {
-        return { restaurantId, restaurantName, items: [newItem] };
+        return {
+          restaurantId,
+          restaurantName,
+          items: [newItem],
+          couponRedeemed: state.couponRedeemed,
+        };
       }
 
       // Same restaurant (or empty cart) → merge
@@ -87,8 +99,12 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       };
     }
 
+    // Preserve coupon state across cart clears (ADR-0009: coupon is per-session)
     case "CLEAR_CART":
-      return { ...INITIAL_STATE };
+      return { ...INITIAL_STATE, couponRedeemed: state.couponRedeemed };
+
+    case "REDEEM_COUPON":
+      return { ...state, couponRedeemed: true };
 
     default:
       return state;
@@ -100,7 +116,11 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 interface CartContextValue {
   state: CartState;
   dispatch: React.Dispatch<CartAction>;
-  /** Total in cents (items × (basePrice + modifiers)), before any discount */
+  /** Items total before any discount, in cents */
+  subtotalCents: number;
+  /** Discount in cents — min(R$10, subtotal) when coupon redeemed, else 0 */
+  discountCents: number;
+  /** Final total in cents (subtotalCents − discountCents) */
   totalCents: number;
   /** True when cart has items from a different restaurant than the given id */
   wouldSwitchRestaurant: (restaurantId: string) => boolean;
@@ -133,10 +153,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state]);
 
-  const totalCents = state.items.reduce((sum, item) => {
+  const subtotalCents = state.items.reduce((sum, item) => {
     const modTotal = item.modifiers.reduce((m, mod) => m + mod.priceDelta, 0);
     return sum + (item.basePriceCents + modTotal) * item.qty;
   }, 0);
+
+  const discountCents = state.couponRedeemed
+    ? Math.min(WELCOME_COUPON_VALUE_CENTS, subtotalCents)
+    : 0;
+
+  const totalCents = subtotalCents - discountCents;
 
   const wouldSwitchRestaurant = useCallback(
     (restaurantId: string) =>
@@ -148,7 +174,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ state, dispatch, totalCents, wouldSwitchRestaurant }}
+      value={{
+        state,
+        dispatch,
+        subtotalCents,
+        discountCents,
+        totalCents,
+        wouldSwitchRestaurant,
+      }}
     >
       {children}
     </CartContext.Provider>

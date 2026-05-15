@@ -13,8 +13,8 @@ export interface CreateOrderInput {
     modifiers: Array<{ group: string; option: string; priceDelta: number }>;
   }>;
   couponCode?: string;
-  // discountCents is intentionally absent: the backend always sets it to 0 in the MVP.
-  // Coupon validation lives here (domain rule), not in the caller.
+  // discountCents is intentionally absent: discount is computed from couponCode here.
+  // Coupon validation lives in this use case (domain rule), never in the caller.
 }
 
 /**
@@ -93,10 +93,17 @@ export class CreateOrderUseCase {
       };
     });
 
-    // 4. Discount — always 0 in MVP (no coupon validation; couponCode is snapshot-only).
+    // 4. Discount — welcome coupon "BEMVINDO10" grants R$10 off (capped at subtotal).
     // Business rule lives here, not in the caller.
-    const discountCents = 0;
-    const totalCents = subtotalCents;
+    // Frontend sends couponCode only when the user has redeemed the welcome banner.
+    const WELCOME_COUPON_CODE = 'BEMVINDO10';
+    const WELCOME_COUPON_DISCOUNT_CENTS = 1000; // R$10,00
+
+    const discountCents =
+      input.couponCode === WELCOME_COUPON_CODE
+        ? Math.min(WELCOME_COUPON_DISCOUNT_CENTS, subtotalCents)
+        : 0;
+    const totalCents = subtotalCents - discountCents;
 
     // 5. Generate pickup code + QR payload
     const code = generatePickupCode();

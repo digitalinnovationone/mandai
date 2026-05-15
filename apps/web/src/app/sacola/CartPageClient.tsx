@@ -134,7 +134,7 @@ function CartItemRow({ item }: { item: CartItem }) {
 }
 
 export default function CartPageClient() {
-  const { state, totalCents, dispatch } = useCart();
+  const { state, subtotalCents, discountCents, totalCents, dispatch } = useCart();
   const router = useRouter();
   const createOrder = useCreateOrder();
   const [customerName, setCustomerName] = useState("");
@@ -154,6 +154,8 @@ export default function CartPageClient() {
           modifiers: i.modifiers,
           note: i.note,
         })),
+        // Send magic code when coupon is redeemed — backend validates & applies discount
+        ...(state.couponRedeemed && { couponCode: "BEMVINDO10" }),
       });
       router.push(`/confirmacao/${order.id}`);
     } catch (err) {
@@ -316,6 +318,38 @@ export default function CartPageClient() {
         })}
 
         <hr className="divider" />
+
+        {/* Subtotal + discount rows (only when coupon was redeemed) */}
+        {discountCents > 0 && (
+          <>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: 14,
+                color: "var(--fg-2)",
+                marginBottom: 8,
+              }}
+            >
+              <span>Subtotal</span>
+              <span className="price">{formatPrice(subtotalCents)}</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: 14,
+                color: "var(--folha-700)",
+                fontWeight: 600,
+                marginBottom: 12,
+              }}
+            >
+              <span>Desconto cupom de boas-vindas</span>
+              <span className="price">−{formatPrice(discountCents)}</span>
+            </div>
+            <hr className="divider" />
+          </>
+        )}
 
         <div
           style={{

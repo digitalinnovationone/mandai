@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fetchRestaurants } from "@/modules/restaurants/services/restaurants.api";
 import type { Restaurant } from "@/modules/restaurants/types";
 import { ArrowRight, Check, Flame, Star, Clock, ChevronRight } from "lucide-react";
+import WelcomeCouponBanner from "@/modules/cart/components/WelcomeCouponBanner";
 
 export const metadata: Metadata = {
   title: "Mandaí — Peça e retire no balcão",
@@ -245,6 +246,9 @@ export default async function HomePage() {
           aria-hidden="true"
         />
       </section>
+
+      {/* ── Welcome coupon banner (US-01) ────────────────── */}
+      <WelcomeCouponBanner />
 
       {/* ── Category tiles ─────────────────────────────────── */}
       <section className="container" style={{ paddingTop: 56, paddingBottom: 8 }}>

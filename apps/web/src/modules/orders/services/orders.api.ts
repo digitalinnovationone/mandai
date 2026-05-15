@@ -9,6 +9,8 @@ export interface CreateOrderInput {
     modifiers: { group: string; option: string; priceDelta: number }[];
     note?: string;
   }[];
+  /** Present only when the user redeemed the welcome coupon — backend validates. */
+  couponCode?: string;
 }
 
 export interface OrderItem {
